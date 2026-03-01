@@ -25,7 +25,6 @@ fetch("data.json")
 /* ========= MAIN RENDER ========= */
 function renderList(list) {
 
-  // sort latest date first
   list.sort((a, b) => parseDate(b.date) - parseDate(a.date));
 
   let html = "";
@@ -40,7 +39,7 @@ function renderList(list) {
     <div class="po-card">
 
       <div class="po-top">
-        <div class="po-number">${highlight(o.po_no)}</div>
+        <div class="po-number">PO: ${highlight(o.po_no)}</div>
         <div class="po-date">${formatDate(o.date)}</div>
       </div>
 
@@ -79,10 +78,10 @@ function renderList(list) {
       </div>
 
       <div class="status-row">
-        <button class="${o.ordered ? 'on' : ''}" onclick="toggleStatus(${i},'ordered')">Ordered</button>
-        <button class="${o.received ? 'on' : ''}" onclick="toggleStatus(${i},'received')">Received</button>
-        <button class="${o.challan ? 'on' : ''}" onclick="toggleStatus(${i},'challan')">Challan</button>
-        <button class="${o.invoice ? 'on' : ''}" onclick="toggleStatus(${i},'invoice')">Invoice</button>
+        ${statusBtn(o,i,"ordered","Ordered")}
+        ${statusBtn(o,i,"received","Received")}
+        ${statusBtn(o,i,"challan","Challan")}
+        ${statusBtn(o,i,"invoice","Invoice")}
       </div>
 
       <div class="pay-row">
@@ -100,6 +99,19 @@ function renderList(list) {
   });
 
   document.getElementById("poList").innerHTML = html;
+}
+
+
+/* ========= STATUS BUTTON ========= */
+function statusBtn(o,i,field,label){
+  const on = o[field];
+  return `
+    <button 
+      class="${on ? 'yes' : 'no'}"
+      onclick="toggleStatus(${i},'${field}')">
+      ${label}: ${on ? "Yes" : "No"}
+    </button>
+  `;
 }
 
 
@@ -133,9 +145,15 @@ function highlight(text) {
 }
 
 
-/* ========= STATUS ========= */
-function toggleStatus(index, field) {
+/* ========= STATUS TOGGLE (PASSWORD) ========= */
+function toggleStatus(index, field){
+
+  const pass = prompt("Enter password to change status:");
+
+  if(pass !== "99") return;
+
   data[index][field] = !data[index][field];
+
   saveJSON();
   applySearch(currentSearch);
 }
