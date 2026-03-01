@@ -16,26 +16,36 @@ renderPOCards();
 
 function renderPOCards(){
 
-data.sort((a,b)=> parseDate(b.date)-parseDate(a.date));
+data.sort((a,b)=>parseDate(b.date)-parseDate(a.date));
 
 let html="";
 
 data.forEach((o,i)=>{
 
+let qty=Number(o.qty||0);
+let rate=Number(o.sell_rate||0);
+let amt=qty*rate;
+
 html+=`
 <div class="po-card">
 
-<div class="po-header">
-<b>Sr ${i+1}</b> | PO: ${o.po_no}
+<div class="po-top">
+<div>Sr ${i+1}</div>
+<div>${formatDate(o.date)}</div>
 </div>
 
-<div>PO Date: ${o.date}</div>
-<div>Item: ${o.description}</div>
-<div>Mfgr: ${o.mfgr}</div>
-<div>Qty: ${o.qty}</div>
-<div>Rate: ${o.sell_rate}</div>
-<div>Amount: ${o.line_total}</div>
-<div>Delivery By: ${o.delivery}</div>
+<div class="po-grid">
+<div><span class="label">PO No</span><br><span class="value">${o.po_no}</span></div>
+<div><span class="label">Delivery</span><br><span class="value">${formatDate(o.delivery)}</span></div>
+
+<div><span class="label">Item</span><br><span class="value">${o.description}</span></div>
+<div><span class="label">Mfgr</span><br><span class="value">${o.mfgr}</span></div>
+
+<div><span class="label">Qty</span><br><span class="value">${formatNum(qty)}</span></div>
+<div><span class="label">Rate</span><br><span class="value">${formatNum(rate)}</span></div>
+
+<div><span class="label">Amount</span><br><span class="amount">${formatNum(amt)}</span></div>
+</div>
 
 <div class="status-row">
 <button class="${o.ordered?'on':''}" onclick="toggle(${i},'ordered')">Ordered</button>
@@ -45,7 +55,7 @@ html+=`
 </div>
 
 <div class="pay-row">
-Payment:
+<span>Payment</span>
 <input type="number" value="${o.rtgs}" onchange="setPayment(${i},this.value)">
 </div>
 
@@ -70,6 +80,20 @@ saveJSON();
 function parseDate(d){
 if(!d) return 0;
 return new Date(d).getTime()||0;
+}
+
+function formatDate(d){
+if(!d) return "";
+let dt=new Date(d);
+if(isNaN(dt)) return d;
+let day=dt.getDate();
+let month=dt.toLocaleString('en',{month:'short'});
+let year=dt.getFullYear();
+return `${day} ${month} ${year}`;
+}
+
+function formatNum(n){
+return Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
 }
 
 function saveJSON(){
