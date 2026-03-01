@@ -7,7 +7,7 @@ let data = [];
 let currentSearch = "";
 
 /* ========= GOOGLE SHEET API ========= */
-const API_URL = "https://script.google.com/macros/s/AKfycbyYuspLdBa0FeQ1aj0nbc7EJtKu2G5xNEzJO-dnidNdfiFEL8D5yz8VlXCYgyt8EWLg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwwoiEUA2QAaxSMN-OVkoeZ9fbfuLk5G_FXANPa0Cfx-c0JIdMbuI2MkwzappVRsDnh2Q/exec";
 
 
 /* ========= LOAD DATA FROM SHEET ========= */
