@@ -1,23 +1,37 @@
 /* ===============================
    BARC PO Monitor — Ishwar Pharma
+   Google Sheet Connected Version
    =============================== */
 
 let data = [];
 let currentSearch = "";
 
+/* ========= GOOGLE SHEET API ========= */
+const API_URL = "https://script.google.com/macros/s/AKfycbyYuspLdBa0FeQ1aj0nbc7EJtKu2G5xNEzJO-dnidNdfiFEL8D5yz8VlXCYgyt8EWLg/exec";
 
-/* ========= LOAD DATA ========= */
-fetch("data.json")
+
+/* ========= LOAD DATA FROM SHEET ========= */
+fetch(API_URL)
   .then(r => r.json())
-  .then(j => {
-    data = j.map(o => ({
-      ...o,
-      ordered: o.ordered || false,
-      received: o.received || false,
-      challan: o.challan || false,
-      invoice: o.invoice || false,
-      rtgs: o.rtgs || ""
+  .then(rows => {
+
+    data = rows.map(o => ({
+      po_no: o.PO_No,
+      description: o.Description,
+      mfgr: o.Mfgr,
+      qty: o.Qty,
+      sell_rate: o["Sell Rate"],
+      line_total: o.Line_Total,
+      date: o.Date,
+      delivery: o.Delivery_Schedule,
+
+      ordered: o.ORDERED === "Yes",
+      received: o.RECEIVED === "Yes",
+      challan: o["DELIVERY CHALLAN"] === "Yes",
+      invoice: o["FINAL INVOICE"] === "Yes",
+      rtgs: o["RTGS AMOUNT"] || ""
     }));
+
     renderList(data);
   });
 
@@ -145,24 +159,50 @@ function highlight(text) {
 }
 
 
-/* ========= STATUS TOGGLE (PASSWORD) ========= */
+/* ========= STATUS TOGGLE → WRITE SHEET ========= */
 function toggleStatus(index, field){
 
   const pass = prompt("Enter password to change status:");
-
   if(pass !== "99") return;
 
-  data[index][field] = !data[index][field];
+  const po = data[index];
+  const newVal = !po[field];
 
-  saveJSON();
+  po[field] = newVal;
+
+  const sheetField = {
+    ordered: "ORDERED",
+    received: "RECEIVED",
+    challan: "DELIVERY CHALLAN",
+    invoice: "FINAL INVOICE"
+  }[field];
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      po_no: po.po_no,
+      field: sheetField,
+      value: newVal ? "Yes" : "No"
+    })
+  });
+
   applySearch(currentSearch);
 }
 
 
-/* ========= PAYMENT ========= */
-function setPayment(index, value) {
+/* ========= PAYMENT → WRITE SHEET ========= */
+function setPayment(index, value){
+
   data[index].rtgs = value;
-  saveJSON();
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      po_no: data[index].po_no,
+      field: "RTGS AMOUNT",
+      value: value
+    })
+  });
 }
 
 
@@ -190,17 +230,4 @@ function formatNum(n) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
-}
-
-
-/* ========= SAVE ========= */
-function saveJSON() {
-  const str =
-    "data:text/json;charset=utf-8," +
-    encodeURIComponent(JSON.stringify(data, null, 2));
-
-  const a = document.createElement("a");
-  a.href = str;
-  a.download = "data.json";
-  a.click();
 }
