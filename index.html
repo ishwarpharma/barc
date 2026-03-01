@@ -10,6 +10,15 @@
 
 <header>BARC PO Monitor — Ishwar Pharma</header>
 
+<div class="search-wrap">
+  <input 
+    id="searchInput" 
+    type="text" 
+    placeholder="🔎 Search PO / Item / Manufacturer..."
+    oninput="applySearch(this.value)"
+  >
+</div>
+
 <div id="poList"></div>
 
 <script src="app.js"></script>
