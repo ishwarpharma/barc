@@ -130,10 +130,10 @@ function formatDate(d) {
 }
 
 
-// Indian number format
-function formatNum(n) {
-  return Number(n || 0).toLocaleString("en-IN", {
-    maximumFractionDigits: 0
+function formatNum(n){
+  return Number(n||0).toLocaleString("en-IN",{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
   });
 }
 
