@@ -1,102 +1,94 @@
 body{
-font-family:Arial;
-margin:10px;
-background:#f4f6f8;
+font-family:Segoe UI,Arial;
+margin:0;
+background:#eef2f7;
 }
 
 header{
-background:#0a3d62;
+background:linear-gradient(90deg,#0a3d62,#1e6091);
 color:white;
-padding:12px;
+padding:14px;
 text-align:center;
-border-radius:8px;
-font-weight:bold;
+font-size:18px;
+font-weight:600;
+letter-spacing:.5px;
 }
 
-.tabs{
-display:flex;
-gap:5px;
-margin:10px 0;
-flex-wrap:wrap;
-}
-
-.tabs button{
-flex:1;
-padding:8px;
-background:#ddd;
-border:none;
-border-radius:6px;
-}
-
-.tab{
-display:none;
-background:white;
-padding:10px;
-border-radius:8px;
-}
-
-input,select{
-width:100%;
-padding:8px;
-margin:5px 0;
-border-radius:6px;
-border:1px solid #ccc;
-}
-
-button{
-padding:10px;
-background:#27ae60;
-color:white;
-border:none;
-border-radius:8px;
-width:100%;
-margin-top:5px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:8px;
-}
-
-td,th{
-border:1px solid #ddd;
-padding:6px;
-font-size:12px;
+#poList{
+padding:12px;
 }
 
 .po-card{
 background:white;
-padding:10px;
-margin:10px 0;
-border-radius:8px;
-box-shadow:0 2px 4px rgba(0,0,0,0.1);
+border-radius:12px;
+padding:14px;
+margin-bottom:14px;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
+border-left:6px solid #1e6091;
 }
 
-.po-header{
-font-size:14px;
-margin-bottom:5px;
+.po-top{
+display:flex;
+justify-content:space-between;
+font-weight:600;
+color:#0a3d62;
+margin-bottom:6px;
+}
+
+.po-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:6px 14px;
+font-size:13px;
+}
+
+.label{
+color:#6b7280;
+}
+
+.value{
+font-weight:600;
+color:#111827;
+}
+
+.amount{
+color:#0a7c4a;
+font-size:15px;
+font-weight:700;
 }
 
 .status-row{
 display:flex;
-gap:5px;
-margin-top:8px;
+gap:6px;
+margin-top:10px;
 }
 
 .status-row button{
 flex:1;
-padding:6px;
+padding:6px 0;
 border:none;
 border-radius:20px;
-background:#ddd;
+font-size:12px;
+background:#e5e7eb;
+color:#374151;
 }
 
 .status-row .on{
-background:#27ae60;
+background:#16a34a;
 color:white;
 }
 
 .pay-row{
 margin-top:8px;
+display:flex;
+align-items:center;
+gap:8px;
+font-size:13px;
+}
+
+.pay-row input{
+flex:1;
+padding:6px;
+border-radius:6px;
+border:1px solid #d1d5db;
 }
