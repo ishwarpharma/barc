@@ -1,9 +1,15 @@
+/* ===============================
+   BARC PO Monitor — Ishwar Pharma
+   =============================== */
+
+
 /* ===== Base ===== */
 body{
   font-family:Segoe UI,Arial;
   margin:0;
   background:linear-gradient(180deg,#eef4ff,#f8fbff);
 }
+
 
 /* ===== Header ===== */
 header{
@@ -16,6 +22,7 @@ header{
   letter-spacing:.5px;
   box-shadow:0 3px 8px rgba(0,0,0,.15);
 }
+
 
 /* ===== Search ===== */
 .search-wrap{
@@ -39,12 +46,14 @@ header{
   box-shadow:0 3px 10px rgba(37,99,235,.25);
 }
 
+
 /* ===== List ===== */
 #poList{
   padding:16px;
   max-width:900px;
   margin:auto;
 }
+
 
 /* ===== Card ===== */
 .po-card{
@@ -61,6 +70,7 @@ header{
   transform:translateY(-2px);
   box-shadow:0 10px 22px rgba(0,0,0,.15);
 }
+
 
 /* ===== Top ===== */
 .po-top{
@@ -85,6 +95,7 @@ header{
   font-weight:600;
 }
 
+
 /* ===== Grid ===== */
 .po-grid{
   display:grid;
@@ -97,6 +108,7 @@ header{
   font-size:11px;
   color:#6b7280;
 }
+
 
 /* ===== Colored Values ===== */
 .item-val{
@@ -125,7 +137,8 @@ header{
   font-size:16px;
 }
 
-/* ===== Delivery ===== */
+
+/* ===== Delivery Badge ===== */
 .delivery{
   background:#ecfdf5;
   color:#047857;
@@ -135,6 +148,7 @@ header{
   font-weight:600;
   display:inline-block;
 }
+
 
 /* ===== Status Buttons ===== */
 .status-row{
@@ -150,15 +164,26 @@ header{
   border-radius:20px;
   font-size:12px;
   font-weight:600;
-  background:#e5e7eb;
-  color:#374151;
   cursor:pointer;
+  transition:.15s;
 }
 
-.status-row .on{
-  background:linear-gradient(90deg,#22c55e,#16a34a);
-  color:white;
+/* NO = red */
+.status-row .no{
+  background:#fee2e2;
+  color:#b91c1c;
 }
+
+/* YES = green */
+.status-row .yes{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status-row button:hover{
+  filter:brightness(.95);
+}
+
 
 /* ===== Payment ===== */
 .pay-row{
@@ -175,6 +200,7 @@ header{
   border-radius:8px;
   border:1px solid #d1d5db;
 }
+
 
 /* ===== Search Highlight ===== */
 .highlight{
