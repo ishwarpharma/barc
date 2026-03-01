@@ -4,100 +4,64 @@ fetch("data.json")
 .then(r=>r.json())
 .then(j=>{
 data=j;
-renderPO();
-fillPOSelects();
+renderPOCards();
 });
 
-function showTab(id){
-document.querySelectorAll(".tab").forEach(t=>t.style.display="none");
-document.getElementById(id).style.display="block";
-}
-showTab("po");
+function renderPOCards(){
 
-function savePO(){
-let obj={
-po_no:po_no.value,
-date:date.value,
-ref_no:ref_no.value,
-description:desc.value,
-mfgr:mfgr.value,
-pack:pack.value,
-qty:qty.value,
-unit:unit.value,
-sell_rate:sell.value,
-line_total:qty.value*sell.value,
-delivery:delivery.value,
-reminder:"",
-hsn:"",
-batch:"",
-mfg:"",
-exp:"",
-sup_qty:"",
-invoice_no:"",
-rtgs:""
-};
+// sort latest date first
+data.sort((a,b)=> new Date(b.date)-new Date(a.date));
 
-data.push(obj);
-saveJSON();
-renderPO();
-fillPOSelects();
-alert("PO Saved");
-}
+let html="";
 
-function renderPO(){
-let s=search.value.toLowerCase();
-let html="<tr><th>PO</th><th>Item</th><th>Qty</th><th>Delivery</th></tr>";
+data.forEach((o,i)=>{
 
-data.filter(d=>d.po_no.toLowerCase().includes(s))
-.forEach(d=>{
-html+=`<tr>
-<td>${d.po_no}</td>
-<td>${d.description}</td>
-<td>${d.qty}</td>
-<td>${d.delivery}</td>
-</tr>`;
+html+=`
+<div class="po-card">
+
+<div class="po-header">
+<b>Sr ${i+1}</b> | PO: ${o.po_no}
+</div>
+
+<div>PO Date: ${o.date}</div>
+<div>Item: ${o.description}</div>
+<div>Mfgr: ${o.mfgr}</div>
+<div>Qty: ${o.qty}</div>
+<div>Rate: ${o.sell_rate}</div>
+<div>Amount: ${o.line_total}</div>
+<div>Delivery By: ${o.delivery}</div>
+
+<div class="status-row">
+
+<button class="${o.ordered?'on':''}" onclick="toggle(${i},'ordered')">Ordered</button>
+<button class="${o.received?'on':''}" onclick="toggle(${i},'received')">Received</button>
+<button class="${o.challan?'on':''}" onclick="toggle(${i},'challan')">Challan</button>
+<button class="${o.invoice?'on':''}" onclick="toggle(${i},'invoice')">Invoice</button>
+
+</div>
+
+<div class="pay-row">
+Payment:
+<input type="number" value="${o.rtgs||''}" 
+onchange="setPayment(${i},this.value)">
+</div>
+
+</div>
+`;
 });
 
-poTable.innerHTML=html;
+document.getElementById("poList").innerHTML=html;
 }
 
-function fillPOSelects(){
-let opts=data.map(d=>`<option>${d.po_no}</option>`).join("");
-rem_po.innerHTML=opts;
-inv_po.innerHTML=opts;
-pay_po.innerHTML=opts;
-print_po.innerHTML=opts;
-}
-
-function saveReminder(){
-let o=data.find(d=>d.po_no==rem_po.value);
-o.reminder=rem_text.value;
+function toggle(i,field){
+data[i][field]=!data[i][field];
 saveJSON();
-alert("Saved");
+renderPOCards();
 }
 
-function saveInvoice(){
-let o=data.find(d=>d.po_no==inv_po.value);
-o.hsn=hsn.value;
-o.batch=batch.value;
-o.mfg=mfg.value;
-o.exp=exp.value;
-o.sup_qty=sup_qty.value;
-o.invoice_no=inv_no.value;
+function setPayment(i,val){
+data[i].rtgs=val;
 saveJSON();
-alert("Saved");
-}
-
-function savePayment(){
-let o=data.find(d=>d.po_no==pay_po.value);
-o.rtgs=rtgs.value;
-saveJSON();
-alert("Saved");
-}
-
-function printPO(){
-let o=data.find(d=>d.po_no==print_po.value);
-alert(JSON.stringify(o,null,2));
 }
 
 function saveJSON(){
