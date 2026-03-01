@@ -38,6 +38,7 @@ fetch(API_URL)
 
 
 /* ========= MAIN RENDER ========= */
+
 function renderList(list) {
 
   list.sort((a, b) => parseDate(b.date) - parseDate(a.date));
@@ -60,46 +61,45 @@ function renderList(list) {
 
       <div class="po-grid">
 
-        <!-- FULL ITEM -->
+        <!-- ITEM FULL -->
         <div class="item-row">
-          <span class="label">Item</span>
-          <div class="item-val">${highlight(o.description || "")}</div>
+          <span class="label">Item</span><br>
+          <span class="item-val">${highlight(o.description || "")}</span>
         </div>
 
         <!-- MFGR + DELIVERY -->
-        <div class="row-2">
+        <div class="double-row">
           <div>
-            <span class="label">Mfgr</span>
+            <span class="label">Mfgr</span><br>
             <span class="mfgr-val">${highlight(o.mfgr || "")}</span>
           </div>
 
-          <div class="right">
-            <span class="label">Delivery</span>
+          <div>
+            <span class="label">Delivery</span><br>
             <span class="delivery">${formatDate(o.delivery)}</span>
           </div>
         </div>
 
         <!-- QTY RATE AMOUNT -->
-        <div class="row-3">
+        <div class="triple-row">
           <div>
-            <span class="label">Qty</span>
+            <span class="label">Qty</span><br>
             <span class="qty-val">${formatNum(qty)}</span>
           </div>
 
           <div>
-            <span class="label">Rate</span>
+            <span class="label">Rate</span><br>
             <span class="rate-val">${formatNum(rate)}</span>
           </div>
 
           <div>
-            <span class="label">Amount</span>
+            <span class="label">Amount</span><br>
             <span class="amount">${formatNum(amount)}</span>
           </div>
         </div>
 
       </div>
 
-      <!-- STATUS -->
       <div class="status-row">
         ${statusBtn(o,i,"ordered","Ordered")}
         ${statusBtn(o,i,"received","Received")}
@@ -107,7 +107,6 @@ function renderList(list) {
         ${statusBtn(o,i,"invoice","Invoice")}
       </div>
 
-      <!-- PAYMENT -->
       <div class="pay-row">
         <span>💰 Payment</span>
         <input
@@ -124,7 +123,6 @@ function renderList(list) {
 
   document.getElementById("poList").innerHTML = html;
 }
-
 
 /* ========= STATUS BUTTON ========= */
 function statusBtn(o,i,field,label){
