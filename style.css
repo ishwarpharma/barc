@@ -1,1 +1,66 @@
+body{
+font-family:Arial;
+margin:10px;
+background:#f4f6f8;
+}
 
+header{
+background:#0a3d62;
+color:white;
+padding:12px;
+text-align:center;
+border-radius:8px;
+font-weight:bold;
+}
+
+.tabs{
+display:flex;
+gap:5px;
+margin:10px 0;
+flex-wrap:wrap;
+}
+
+.tabs button{
+flex:1;
+padding:8px;
+background:#ddd;
+border:none;
+border-radius:6px;
+}
+
+.tab{
+display:none;
+background:white;
+padding:10px;
+border-radius:8px;
+}
+
+input,select{
+width:100%;
+padding:8px;
+margin:5px 0;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px;
+background:#27ae60;
+color:white;
+border:none;
+border-radius:8px;
+width:100%;
+margin-top:5px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:8px;
+}
+
+td,th{
+border:1px solid #ddd;
+padding:6px;
+font-size:12px;
+}
