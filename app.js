@@ -58,39 +58,47 @@ function renderList(list) {
         <div class="po-date">${formatDate(o.date)}</div>
       </div>
 
-      <div class="po-grid">
+<div class="po-grid">
 
-        <!-- ITEM FULL WIDTH -->
-        <div class="item-row">
-          <span class="label">Item</span><br>
-          <span class="item-val">${highlight(o.description || "")}</span>
-        </div>
+  <!-- FULL ITEM -->
+  <div class="item-row">
+    <span class="label">Item</span>
+    <div class="item-val">${highlight(o.description || "")}</div>
+  </div>
 
-        <!-- MFGR + QTY + RATE -->
-        <div class="triple-row">
-          <div>
-            <span class="label">Manufacturer</span><br>
-            <span class="mfgr-val">${highlight(o.mfgr || "")}</span>
-          </div>
+  <!-- Mfgr + Delivery -->
+  <div class="row-2">
+    <div>
+      <span class="label">Mfgr</span>
+      <span class="mfgr-val">${highlight(o.mfgr || "")}</span>
+    </div>
 
-          <div>
-            <span class="label">Qty</span><br>
-            <span class="qty-val">${formatNum(qty)}</span>
-          </div>
+    <div class="right">
+      <span class="label">Delivery</span>
+      <span class="delivery">${formatDate(o.delivery)}</span>
+    </div>
+  </div>
 
-          <div>
-            <span class="label">Rate</span><br>
-            <span class="rate-val">${formatNum(rate)}</span>
-          </div>
-        </div>
+  <!-- Qty Rate Amount -->
+  <div class="row-3">
+    <div>
+      <span class="label">Qty</span>
+      <span class="qty-val">${formatNum(qty)}</span>
+    </div>
 
-        <!-- AMOUNT + DELIVERY -->
-        <div class="double-row">
-          <div>
-            <span class="label">Amount</span><br>
-            <span class="amount">${formatNum(amount)}</span>
-          </div>
+    <div>
+      <span class="label">Rate</span>
+      <span class="rate-val">${formatNum(rate)}</span>
+    </div>
 
+    <div>
+      <span class="label">Amount</span>
+      <span class="amount">${formatNum(amount)}</span>
+    </div>
+  </div>
+
+</div>
+      
           <div>
             <span class="label">Delivery</span><br>
             <span class="delivery">${formatDate(o.delivery)}</span>
