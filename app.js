@@ -28,7 +28,7 @@ function renderPOCards() {
 
     const qty = Number(o.qty || 0);
     const rate = Number(o.sell_rate || 0);
-    const amount = qty * rate;
+    const amount = Number(o.line_total || 0);   // use Excel Line_Total
 
     html += `
       <div class="po-card">
@@ -41,22 +41,22 @@ function renderPOCards() {
         <div class="po-grid">
           <div>
             <span class="label">Item</span><br>
-            <span class="value">${o.description || ""}</span>
+            <span class="item-val">${o.description || ""}</span>
           </div>
 
           <div>
             <span class="label">Manufacturer</span><br>
-            <span class="value">${o.mfgr || ""}</span>
+            <span class="mfgr-val">${o.mfgr || ""}</span>
           </div>
 
           <div>
             <span class="label">Qty</span><br>
-            <span class="value">${formatNum(qty)}</span>
+            <span class="qty-val">${formatNum(qty)}</span>
           </div>
 
           <div>
             <span class="label">Rate</span><br>
-            <span class="value">${formatNum(rate)}</span>
+            <span class="rate-val">${formatNum(rate)}</span>
           </div>
 
           <div>
@@ -130,6 +130,7 @@ function formatDate(d) {
 }
 
 
+// Number format (2 decimals)
 function formatNum(n){
   return Number(n||0).toLocaleString("en-IN",{
     minimumFractionDigits:2,
