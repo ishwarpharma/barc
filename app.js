@@ -3,14 +3,20 @@ let data=[];
 fetch("data.json")
 .then(r=>r.json())
 .then(j=>{
-data=j;
+data=j.map(o=>({
+...o,
+ordered:o.ordered||false,
+received:o.received||false,
+challan:o.challan||false,
+invoice:o.invoice||false,
+rtgs:o.rtgs||""
+}));
 renderPOCards();
 });
 
 function renderPOCards(){
 
-// sort latest date first
-data.sort((a,b)=> new Date(b.date)-new Date(a.date));
+data.sort((a,b)=> parseDate(b.date)-parseDate(a.date));
 
 let html="";
 
@@ -32,18 +38,15 @@ html+=`
 <div>Delivery By: ${o.delivery}</div>
 
 <div class="status-row">
-
 <button class="${o.ordered?'on':''}" onclick="toggle(${i},'ordered')">Ordered</button>
 <button class="${o.received?'on':''}" onclick="toggle(${i},'received')">Received</button>
 <button class="${o.challan?'on':''}" onclick="toggle(${i},'challan')">Challan</button>
 <button class="${o.invoice?'on':''}" onclick="toggle(${i},'invoice')">Invoice</button>
-
 </div>
 
 <div class="pay-row">
 Payment:
-<input type="number" value="${o.rtgs||''}" 
-onchange="setPayment(${i},this.value)">
+<input type="number" value="${o.rtgs}" onchange="setPayment(${i},this.value)">
 </div>
 
 </div>
@@ -62,6 +65,11 @@ renderPOCards();
 function setPayment(i,val){
 data[i].rtgs=val;
 saveJSON();
+}
+
+function parseDate(d){
+if(!d) return 0;
+return new Date(d).getTime()||0;
 }
 
 function saveJSON(){
