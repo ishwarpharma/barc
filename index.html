@@ -1,1 +1,77 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BARC Orders</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>BARC Order System — Ishwar Pharma</header>
+
+<div class="tabs">
+<button onclick="showTab('po')">New PO</button>
+<button onclick="showTab('reminder')">Reminder</button>
+<button onclick="showTab('invoice')">Invoice</button>
+<button onclick="showTab('payment')">Payment</button>
+<button onclick="showTab('print')">Print</button>
+</div>
+
+<div id="po" class="tab">
+<h3>New Purchase Order</h3>
+
+<input id="po_no" placeholder="PO Number">
+<input id="date" type="date">
+<input id="ref_no" placeholder="Ref No">
+<input id="desc" placeholder="Description">
+<input id="mfgr" placeholder="Manufacturer">
+<input id="pack" placeholder="Pack">
+<input id="qty" type="number" placeholder="Qty">
+<input id="unit" placeholder="Unit">
+<input id="sell" type="number" placeholder="Sell Rate">
+<input id="delivery" type="date">
+
+<button onclick="savePO()">Save PO</button>
+
+<h3>PO List</h3>
+<input id="search" placeholder="Search PO" onkeyup="renderPO()">
+<table id="poTable"></table>
+</div>
+
+<div id="reminder" class="tab">
+<h3>Reminder Update</h3>
+<select id="rem_po"></select>
+<input id="rem_text" placeholder="Reminder note/date">
+<button onclick="saveReminder()">Save</button>
+</div>
+
+<div id="invoice" class="tab">
+<h3>Invoice Entry</h3>
+<select id="inv_po"></select>
+<input id="hsn" placeholder="HSN Code">
+<input id="batch" placeholder="Batch">
+<input id="mfg" type="date">
+<input id="exp" type="date">
+<input id="sup_qty" type="number" placeholder="Supplied Qty">
+<input id="inv_no" placeholder="Invoice No">
+<button onclick="saveInvoice()">Save</button>
+</div>
+
+<div id="payment" class="tab">
+<h3>Payment Entry</h3>
+<select id="pay_po"></select>
+<input id="rtgs" type="number" placeholder="RTGS Amount">
+<button onclick="savePayment()">Save</button>
+</div>
+
+<div id="print" class="tab">
+<h3>Print / Export</h3>
+<select id="print_po"></select>
+<button onclick="printPO()">Generate File</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
