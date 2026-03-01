@@ -1,7 +1,7 @@
 /* ===============================
    BARC PO Monitor — Ishwar Pharma
    Google Sheet Connected Version
-   Compact Mobile Layout
+   Compact Mirror Layout
    =============================== */
 
 let data = [];
@@ -58,50 +58,42 @@ function renderList(list) {
         <div class="po-date">${formatDate(o.date)}</div>
       </div>
 
-<div class="po-grid">
+      <div class="po-grid">
 
-  <!-- FULL ITEM -->
-  <div class="item-row">
-    <span class="label">Item</span>
-    <div class="item-val">${highlight(o.description || "")}</div>
-  </div>
+        <!-- FULL ITEM -->
+        <div class="item-row">
+          <span class="label">Item</span>
+          <div class="item-val">${highlight(o.description || "")}</div>
+        </div>
 
-  <!-- Mfgr + Delivery -->
-  <div class="row-2">
-    <div>
-      <span class="label">Mfgr</span>
-      <span class="mfgr-val">${highlight(o.mfgr || "")}</span>
-    </div>
-
-    <div class="right">
-      <span class="label">Delivery</span>
-      <span class="delivery">${formatDate(o.delivery)}</span>
-    </div>
-  </div>
-
-  <!-- Qty Rate Amount -->
-  <div class="row-3">
-    <div>
-      <span class="label">Qty</span>
-      <span class="qty-val">${formatNum(qty)}</span>
-    </div>
-
-    <div>
-      <span class="label">Rate</span>
-      <span class="rate-val">${formatNum(rate)}</span>
-    </div>
-
-    <div>
-      <span class="label">Amount</span>
-      <span class="amount">${formatNum(amount)}</span>
-    </div>
-  </div>
-
-</div>
-      
+        <!-- MFGR + DELIVERY -->
+        <div class="row-2">
           <div>
-            <span class="label">Delivery</span><br>
+            <span class="label">Mfgr</span>
+            <span class="mfgr-val">${highlight(o.mfgr || "")}</span>
+          </div>
+
+          <div class="right">
+            <span class="label">Delivery</span>
             <span class="delivery">${formatDate(o.delivery)}</span>
+          </div>
+        </div>
+
+        <!-- QTY RATE AMOUNT -->
+        <div class="row-3">
+          <div>
+            <span class="label">Qty</span>
+            <span class="qty-val">${formatNum(qty)}</span>
+          </div>
+
+          <div>
+            <span class="label">Rate</span>
+            <span class="rate-val">${formatNum(rate)}</span>
+          </div>
+
+          <div>
+            <span class="label">Amount</span>
+            <span class="amount">${formatNum(amount)}</span>
           </div>
         </div>
 
@@ -175,7 +167,7 @@ function highlight(text){
 }
 
 
-/* ========= STATUS TOGGLE → WRITE SHEET ========= */
+/* ========= STATUS TOGGLE → SHEET ========= */
 function toggleStatus(index, field){
 
   const pass = prompt("Enter password to change status:");
@@ -206,7 +198,7 @@ function toggleStatus(index, field){
 }
 
 
-/* ========= PAYMENT → WRITE SHEET ========= */
+/* ========= PAYMENT → SHEET ========= */
 function setPayment(index, value){
 
   data[index].rtgs = value;
