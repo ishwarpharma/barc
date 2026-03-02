@@ -1,35 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BARC PO Monitor — Ishwar Pharma</title>
-
-  <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BARC PO Monitor</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- Header -->
-  <header>
-    BARC PO Monitor — Ishwar Pharma
-  </header>
+<header>BARC PO Monitor — Ishwar Pharma</header>
 
-  <!-- Search -->
-  <div class="search-wrap">
-    <input
-      id="searchInput"
-      type="text"
-      placeholder="🔎 Search PO / Item / Manufacturer..."
-      oninput="applySearch(this.value)"
-    >
-  </div>
+<div class="search-wrap">
+  <input 
+    id="searchInput"
+    type="text"
+    placeholder="🔎 Search PO / Item / Manufacturer..."
+    oninput="applySearch(this.value)"
+  >
+</div>
 
-  <!-- PO List -->
-  <main id="poList"></main>
+<div id="poList"></div>
 
-  <script src="app.js"></script>
-
+<script src="app.js"></script>
 </body>
 </html>
