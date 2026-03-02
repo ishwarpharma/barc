@@ -1,16 +1,14 @@
 /* ===============================
    BARC PO Monitor — Ishwar Pharma
-   Google Sheet Connected UI
-   Compact Layout FINAL
+   Compact FINAL
    =============================== */
 
 let data = [];
 let currentSearch = "";
 
-/* ========= GOOGLE SHEET API ========= */
 const API_URL = "https://script.google.com/macros/s/AKfycbwwoiEUA2QAaxSMN-OVkoeZ9fbfuLk5G_FXANPa0Cfx-c0JIdMbuI2MkwzappVRsDnh2Q/exec";
 
-/* ========= LOAD DATA ========= */
+/* LOAD */
 fetch(API_URL)
   .then(r => r.json())
   .then(rows => {
@@ -35,7 +33,7 @@ fetch(API_URL)
     renderList(data);
   });
 
-/* ========= RENDER ========= */
+/* RENDER */
 function renderList(list) {
 
   list.sort((a, b) => parseDate(b.date) - parseDate(a.date));
@@ -43,10 +41,6 @@ function renderList(list) {
   let html = "";
 
   list.forEach((o, i) => {
-
-    const qty = Number(o.qty || 0);
-    const rate = Number(o.sell_rate || 0);
-    const amount = Number(o.line_total || 0);
 
     html += `
     <div class="po-card">
@@ -58,13 +52,11 @@ function renderList(list) {
 
       <div class="po-grid">
 
-        <!-- ITEM FULL WIDTH -->
         <div class="item-row">
           <span class="label">Item</span><br>
           <span class="item-val">${highlight(o.description || "")}</span>
         </div>
 
-        <!-- MFGR + DELIVERY ONE LINE -->
         <div class="double-row">
           <div>
             <span class="label">Manufacturer</span><br>
@@ -76,19 +68,18 @@ function renderList(list) {
           </div>
         </div>
 
-        <!-- QTY RATE AMOUNT ONE LINE -->
         <div class="triple-row">
           <div>
             <span class="label">Qty</span><br>
-            <span class="qty-val">${formatNum(qty)}</span>
+            <span class="qty-val">${formatNum(o.qty)}</span>
           </div>
           <div>
             <span class="label">Rate</span><br>
-            <span class="rate-val">${formatNum(rate)}</span>
+            <span class="rate-val">${formatNum(o.sell_rate)}</span>
           </div>
           <div>
             <span class="label">Amount</span><br>
-            <span class="amount">${formatNum(amount)}</span>
+            <span class="amount">${formatNum(o.line_total)}</span>
           </div>
         </div>
 
@@ -118,49 +109,40 @@ function renderList(list) {
   document.getElementById("poList").innerHTML = html;
 }
 
-/* ========= STATUS BUTTON ========= */
+/* STATUS BTN */
 function statusBtn(o,i,field,label){
-  const on = o[field];
   return `
     <button 
-      class="${on ? 'yes' : 'no'}"
+      class="${o[field] ? 'yes' : 'no'}"
       onclick="toggleStatus(${i},'${field}')">
-      ${label}: ${on ? "Yes" : "No"}
+      ${label}: ${o[field] ? "Yes" : "No"}
     </button>
   `;
 }
 
-/* ========= SEARCH ========= */
+/* SEARCH */
 function applySearch(term) {
 
   currentSearch = term.toLowerCase().trim();
 
-  if (!currentSearch) {
-    renderList(data);
-    return;
-  }
+  if (!currentSearch) return renderList(data);
 
-  let filtered = data.filter(o => {
-    return (
-      o.po_no?.toLowerCase().includes(currentSearch) ||
-      o.description?.toLowerCase().includes(currentSearch) ||
-      o.mfgr?.toLowerCase().includes(currentSearch)
-    );
-  });
+  const filtered = data.filter(o =>
+    o.po_no?.toLowerCase().includes(currentSearch) ||
+    o.description?.toLowerCase().includes(currentSearch) ||
+    o.mfgr?.toLowerCase().includes(currentSearch)
+  );
 
   renderList(filtered);
 }
 
-/* ========= STATUS TOGGLE ========= */
+/* TOGGLE */
 function toggleStatus(index, field){
 
-  const pass = prompt("Enter password:");
-  if(pass !== "99") return;
+  if(prompt("Enter password:") !== "99") return;
 
   const po = data[index];
-  const newVal = !po[field];
-
-  po[field] = newVal;
+  po[field] = !po[field];
 
   const sheetField = {
     ordered: "ORDERED",
@@ -169,56 +151,47 @@ function toggleStatus(index, field){
     invoice: "FINAL INVOICE"
   }[field];
 
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
+  fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
       po_no: po.po_no,
       field: sheetField,
-      value: newVal ? "Yes" : "No"
+      value: po[field] ? "Yes":"No"
     })
   });
 
   applySearch(currentSearch);
 }
 
-/* ========= PAYMENT ========= */
-function setPayment(index, value){
+/* PAYMENT */
+function setPayment(index,val){
+  data[index].rtgs = val;
 
-  data[index].rtgs = value;
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      po_no: data[index].po_no,
-      field: "RTGS AMOUNT",
-      value: value
+  fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      po_no:data[index].po_no,
+      field:"RTGS AMOUNT",
+      value:val
     })
   });
 }
 
-/* ========= HELPERS ========= */
-function highlight(text) {
-  if (!currentSearch || !text) return text || "";
-  const re = new RegExp(`(${currentSearch})`, "gi");
-  return text.replace(re, `<span class="highlight">$1</span>`);
+/* HELPERS */
+function highlight(t){
+  if(!currentSearch||!t) return t||"";
+  return t.replace(new RegExp(`(${currentSearch})`,"gi"),
+    `<span class="highlight">$1</span>`);
 }
 
-function parseDate(d) {
-  if (!d) return 0;
-  const t = new Date(d);
-  return isNaN(t) ? 0 : t.getTime();
+function parseDate(d){ return d?new Date(d).getTime():0 }
+
+function formatDate(d){
+  if(!d) return "";
+  const x=new Date(d);
+  return `${x.getDate()} ${x.toLocaleString("en",{month:"short"})} ${x.getFullYear()}`;
 }
 
-function formatDate(d) {
-  if (!d) return "";
-  const dt = new Date(d);
-  if (isNaN(dt)) return d;
-  return `${dt.getDate()} ${dt.toLocaleString("en",{month:"short"})} ${dt.getFullYear()}`;
-}
-
-function formatNum(n) {
-  return Number(n || 0).toLocaleString("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+function formatNum(n){
+  return Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
