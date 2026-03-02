@@ -1,6 +1,6 @@
 /* ===============================
    BARC PO Monitor — Ishwar Pharma
-   Compact FINAL
+   FINAL LAYOUT
    =============================== */
 
 let data = [];
@@ -8,7 +8,7 @@ let currentSearch = "";
 
 const API_URL = "https://script.google.com/macros/s/AKfycbwwoiEUA2QAaxSMN-OVkoeZ9fbfuLk5G_FXANPa0Cfx-c0JIdMbuI2MkwzappVRsDnh2Q/exec";
 
-/* LOAD */
+/* LOAD DATA */
 fetch(API_URL)
   .then(r => r.json())
   .then(rows => {
@@ -33,16 +33,17 @@ fetch(API_URL)
     renderList(data);
   });
 
+
 /* RENDER */
-function renderList(list) {
+function renderList(list){
 
-  list.sort((a, b) => parseDate(b.date) - parseDate(a.date));
+  list.sort((a,b)=>parseDate(b.date)-parseDate(a.date));
 
-  let html = "";
+  let html="";
 
-  list.forEach((o, i) => {
+  list.forEach((o,i)=>{
 
-    html += `
+    html+=`
     <div class="po-card">
 
       <div class="po-top">
@@ -53,33 +54,33 @@ function renderList(list) {
       <div class="po-grid">
 
         <div class="item-row">
-          <span class="label">Item</span><br>
-          <span class="item-val">${highlight(o.description || "")}</span>
+          <span class="label">Item</span>
+          <div class="item-val">${highlight(o.description||"")}</div>
         </div>
 
-        <div class="double-row">
+        <div class="row-2col">
           <div>
-            <span class="label">Manufacturer</span><br>
-            <span class="mfgr-val">${highlight(o.mfgr || "")}</span>
+            <span class="label">Manufacturer</span>
+            <div class="mfgr-val">${highlight(o.mfgr||"")}</div>
           </div>
           <div>
-            <span class="label">Delivery</span><br>
-            <span class="delivery">${formatDate(o.delivery)}</span>
+            <span class="label">Delivery</span>
+            <div class="delivery">${formatDate(o.delivery)}</div>
           </div>
         </div>
 
-        <div class="triple-row">
+        <div class="row-3col">
           <div>
-            <span class="label">Qty</span><br>
-            <span class="qty-val">${formatNum(o.qty)}</span>
+            <span class="label">Qty</span>
+            <div class="qty-val">${formatNum(o.qty)}</div>
           </div>
           <div>
-            <span class="label">Rate</span><br>
-            <span class="rate-val">${formatNum(o.sell_rate)}</span>
+            <span class="label">Rate</span>
+            <div class="rate-val">${formatNum(o.sell_rate)}</div>
           </div>
           <div>
-            <span class="label">Amount</span><br>
-            <span class="amount">${formatNum(o.line_total)}</span>
+            <span class="label">Amount</span>
+            <div class="amount">${formatNum(o.line_total)}</div>
           </div>
         </div>
 
@@ -94,100 +95,94 @@ function renderList(list) {
 
       <div class="pay-row">
         <span>💰 Payment</span>
-        <input
-          type="number"
+        <input type="number"
           value="${o.rtgs}"
           placeholder="Amount received"
-          onchange="setPayment(${i}, this.value)"
-        >
+          onchange="setPayment(${i},this.value)">
       </div>
 
-    </div>
-    `;
+    </div>`;
   });
 
-  document.getElementById("poList").innerHTML = html;
+  document.getElementById("poList").innerHTML=html;
 }
 
-/* STATUS BTN */
-function statusBtn(o,i,field,label){
-  return `
-    <button 
-      class="${o[field] ? 'yes' : 'no'}"
-      onclick="toggleStatus(${i},'${field}')">
-      ${label}: ${o[field] ? "Yes" : "No"}
-    </button>
-  `;
+
+/* STATUS */
+function statusBtn(o,i,f,label){
+  return `<button class="${o[f]?'yes':'no'}"
+    onclick="toggleStatus(${i},'${f}')">
+    ${label}: ${o[f]?'Yes':'No'}
+  </button>`;
 }
 
-/* SEARCH */
-function applySearch(term) {
+function toggleStatus(i,f){
+  if(prompt("Enter password")!=="99")return;
 
-  currentSearch = term.toLowerCase().trim();
+  const po=data[i];
+  po[f]=!po[f];
 
-  if (!currentSearch) return renderList(data);
-
-  const filtered = data.filter(o =>
-    o.po_no?.toLowerCase().includes(currentSearch) ||
-    o.description?.toLowerCase().includes(currentSearch) ||
-    o.mfgr?.toLowerCase().includes(currentSearch)
-  );
-
-  renderList(filtered);
-}
-
-/* TOGGLE */
-function toggleStatus(index, field){
-
-  if(prompt("Enter password:") !== "99") return;
-
-  const po = data[index];
-  po[field] = !po[field];
-
-  const sheetField = {
-    ordered: "ORDERED",
-    received: "RECEIVED",
-    challan: "DELIVERY CHALLAN",
-    invoice: "FINAL INVOICE"
-  }[field];
+  const map={
+    ordered:"ORDERED",
+    received:"RECEIVED",
+    challan:"DELIVERY CHALLAN",
+    invoice:"FINAL INVOICE"
+  };
 
   fetch(API_URL,{
     method:"POST",
     body:JSON.stringify({
-      po_no: po.po_no,
-      field: sheetField,
-      value: po[field] ? "Yes":"No"
+      po_no:po.po_no,
+      field:map[f],
+      value:po[f]?"Yes":"No"
     })
   });
 
   applySearch(currentSearch);
 }
 
+
 /* PAYMENT */
-function setPayment(index,val){
-  data[index].rtgs = val;
+function setPayment(i,val){
+  data[i].rtgs=val;
 
   fetch(API_URL,{
     method:"POST",
     body:JSON.stringify({
-      po_no:data[index].po_no,
+      po_no:data[i].po_no,
       field:"RTGS AMOUNT",
       value:val
     })
   });
 }
 
-/* HELPERS */
-function highlight(t){
-  if(!currentSearch||!t) return t||"";
-  return t.replace(new RegExp(`(${currentSearch})`,"gi"),
+
+/* SEARCH */
+function applySearch(t){
+  currentSearch=t.toLowerCase().trim();
+  if(!currentSearch) return renderList(data);
+
+  const f=data.filter(o=>
+    o.po_no?.toLowerCase().includes(currentSearch)||
+    o.description?.toLowerCase().includes(currentSearch)||
+    o.mfgr?.toLowerCase().includes(currentSearch)
+  );
+
+  renderList(f);
+}
+
+function highlight(txt){
+  if(!currentSearch||!txt)return txt||"";
+  return txt.replace(new RegExp(`(${currentSearch})`,"gi"),
     `<span class="highlight">$1</span>`);
 }
 
-function parseDate(d){ return d?new Date(d).getTime():0 }
+
+/* HELPERS */
+function parseDate(d){return d?new Date(d).getTime():0}
 
 function formatDate(d){
-  if(!d) return "";
+  if(!d)return"";
   const x=new Date(d);
   return `${x.getDate()} ${x.toLocaleString("en",{month:"short"})} ${x.getFullYear()}`;
 }
