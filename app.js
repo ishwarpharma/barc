@@ -8,7 +8,10 @@ let currentSearch = "";
 
 const API_URL = "https://script.google.com/macros/s/AKfycbwwoiEUA2QAaxSMN-OVkoeZ9fbfuLk5G_FXANPa0Cfx-c0JIdMbuI2MkwzappVRsDnh2Q/exec";
 
-/* LOAD DATA */
+/* ===============================
+   LOAD DATA FROM GOOGLE SHEET
+   =============================== */
+
 fetch(API_URL)
   .then(r => r.json())
   .then(rows => {
@@ -24,13 +27,13 @@ fetch(API_URL)
       date: o.Date || "",
       delivery: o.Delivery_Schedule || "",
 
-      /* GOOGLE SHEET COLUMN MAPPING */
-      ordered: (o.ORDERED || "").toString().toLowerCase() === "yes",
-      received: (o.RECEIVED || "").toString().toLowerCase() === "yes",
-      challan: (o["DELIVERY CHALLAN"] || "").toString().toLowerCase() === "yes",
-      invoice: (o["FINAL INVOICE"] || "").toString().toLowerCase() === "yes",
+      /* GOOGLE SHEET STATUS COLUMNS */
+      ordered: (o.ORDERED || "").toLowerCase() === "yes",
+      received: (o.RECEIVED || "").toLowerCase() === "yes",
+      challan: (o["DELIVERY CHALLAN"] || "").toLowerCase() === "yes",
+      invoice: (o["FINAL INVOICE"] || "").toLowerCase() === "yes",
 
-      /* COLUMN W */
+      /* PAYMENT COLUMN W */
       rtgs: o["RTGS AMOUNT"] || ""
 
     }));
@@ -39,7 +42,10 @@ fetch(API_URL)
   });
 
 
-/* RENDER */
+/* ===============================
+   RENDER PO LIST
+   =============================== */
+
 function renderList(list){
 
   list.sort((a,b)=>parseDate(b.date)-parseDate(a.date));
@@ -48,7 +54,7 @@ function renderList(list){
 
   list.forEach((o,i)=>{
 
-    html+=`
+    html += `
     <div class="po-card">
 
       <div class="po-top">
@@ -112,92 +118,128 @@ function renderList(list){
     </div>`;
   });
 
-  document.getElementById("poList").innerHTML=html;
+  document.getElementById("poList").innerHTML = html;
 }
 
 
-/* STATUS BUTTON */
-function statusBtn(o,i,f,label){
-  return `<button class="${o[f]?'yes':'no'}"
-    onclick="toggleStatus(${i},'${f}')">
-    ${label}: ${o[f]?'Yes':'No'}
+/* ===============================
+   STATUS BUTTON
+   =============================== */
+
+function statusBtn(o,i,field,label){
+
+  return `
+  <button class="${o[field] ? 'yes':'no'}"
+    onclick="toggleStatus(${i},'${field}')">
+    ${label}: ${o[field] ? "Yes":"No"}
   </button>`;
 }
 
 
-/* TOGGLE STATUS */
-function toggleStatus(i,f){
+/* ===============================
+   TOGGLE STATUS (PASSWORD 99)
+   =============================== */
 
-  if(prompt("Enter password")!=="99") return;
+function toggleStatus(index,field){
 
-  const po=data[i];
-  po[f]=!po[f];
+  const pass = prompt("Enter password to change status:");
 
-  const map={
+  if(pass !== "99"){
+    alert("Wrong password");
+    return;
+  }
+
+  const po = data[index];
+
+  const newValue = !po[field];
+
+  /* update UI */
+  po[field] = newValue;
+
+  const map = {
     ordered:"ORDERED",
     received:"RECEIVED",
     challan:"DELIVERY CHALLAN",
     invoice:"FINAL INVOICE"
   };
 
+  /* update Google Sheet */
   fetch(API_URL,{
     method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
     body:JSON.stringify({
-      po_no:po.po_no,
-      field:map[f],
-      value:po[f]?"Yes":"No"
+      po_no: po.po_no,
+      field: map[field],
+      value: newValue ? "Yes":"No"
     })
   });
 
-  applySearch(currentSearch);
+  renderList(data);
 }
 
 
-/* PAYMENT UPDATE (COLUMN W) */
-function setPayment(i,val){
+/* ===============================
+   UPDATE PAYMENT (COLUMN W)
+   =============================== */
 
-  data[i].rtgs=val;
+function setPayment(index,value){
+
+  data[index].rtgs = value;
 
   fetch(API_URL,{
     method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
     body:JSON.stringify({
-      po_no:data[i].po_no,
+      po_no:data[index].po_no,
       field:"RTGS AMOUNT",
-      value:val
+      value:value
     })
   });
 }
 
 
-/* SEARCH */
-function applySearch(t){
+/* ===============================
+   SEARCH
+   =============================== */
 
-  currentSearch=t.toLowerCase().trim();
+function applySearch(term){
 
-  if(!currentSearch) return renderList(data);
+  currentSearch = term.toLowerCase().trim();
 
-  const f=data.filter(o=>
-    o.po_no.toLowerCase().includes(currentSearch)||
-    o.description.toLowerCase().includes(currentSearch)||
-    o.mfgr.toLowerCase().includes(currentSearch)
+  if(!currentSearch){
+    renderList(data);
+    return;
+  }
+
+  const filtered = data.filter(o =>
+      o.po_no.toLowerCase().includes(currentSearch) ||
+      o.description.toLowerCase().includes(currentSearch) ||
+      o.mfgr.toLowerCase().includes(currentSearch)
   );
 
-  renderList(f);
+  renderList(filtered);
 }
 
 
-function highlight(txt){
+function highlight(text){
 
-  if(!currentSearch || !txt) return txt;
+  if(!currentSearch || !text) return text;
 
-  return txt.replace(
+  return text.replace(
     new RegExp(`(${currentSearch})`,"gi"),
     `<span class="highlight">$1</span>`
   );
 }
 
 
-/* HELPERS */
+/* ===============================
+   HELPERS
+   =============================== */
+
 function parseDate(d){
   return d ? new Date(d).getTime() : 0;
 }
@@ -206,7 +248,7 @@ function formatDate(d){
 
   if(!d) return "";
 
-  const x=new Date(d);
+  const x = new Date(d);
 
   return `${x.getDate()} ${x.toLocaleString("en",{month:"short"})} ${x.getFullYear()}`;
 }
