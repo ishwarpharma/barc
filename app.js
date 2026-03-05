@@ -14,20 +14,25 @@ fetch(API_URL)
   .then(rows => {
 
     data = rows.map(o => ({
-      po_no: o.PO_No,
-      description: o.Description,
-      mfgr: o.Mfgr,
-      qty: o.Qty,
-      sell_rate: o["Sell Rate"],
-      line_total: o.Line_Total,
-      date: o.Date,
-      delivery: o.Delivery_Schedule,
 
-      ordered: o.ORDERED === "Yes",
-      received: o.RECEIVED === "Yes",
-      challan: o["DELIVERY CHALLAN"] === "Yes",
-      invoice: o["FINAL INVOICE"] === "Yes",
+      po_no: o.PO_No || "",
+      description: o.Description || "",
+      mfgr: o.Mfgr || "",
+      qty: o.Qty || 0,
+      sell_rate: o["Sell Rate"] || 0,
+      line_total: o.Line_Total || 0,
+      date: o.Date || "",
+      delivery: o.Delivery_Schedule || "",
+
+      /* GOOGLE SHEET COLUMN MAPPING */
+      ordered: (o.ORDERED || "").toString().toLowerCase() === "yes",
+      received: (o.RECEIVED || "").toString().toLowerCase() === "yes",
+      challan: (o["DELIVERY CHALLAN"] || "").toString().toLowerCase() === "yes",
+      invoice: (o["FINAL INVOICE"] || "").toString().toLowerCase() === "yes",
+
+      /* COLUMN W */
       rtgs: o["RTGS AMOUNT"] || ""
+
     }));
 
     renderList(data);
@@ -55,14 +60,15 @@ function renderList(list){
 
         <div class="item-row">
           <span class="label">Item</span>
-          <div class="item-val">${highlight(o.description||"")}</div>
+          <div class="item-val">${highlight(o.description)}</div>
         </div>
 
         <div class="row-2col">
           <div>
             <span class="label">Manufacturer</span>
-            <div class="mfgr-val">${highlight(o.mfgr||"")}</div>
+            <div class="mfgr-val">${highlight(o.mfgr)}</div>
           </div>
+
           <div>
             <span class="label">Delivery</span>
             <div class="delivery">${formatDate(o.delivery)}</div>
@@ -74,10 +80,12 @@ function renderList(list){
             <span class="label">Qty</span>
             <div class="qty-val">${formatNum(o.qty)}</div>
           </div>
+
           <div>
             <span class="label">Rate</span>
             <div class="rate-val">${formatNum(o.sell_rate)}</div>
           </div>
+
           <div>
             <span class="label">Amount</span>
             <div class="amount">${formatNum(o.line_total)}</div>
@@ -108,7 +116,7 @@ function renderList(list){
 }
 
 
-/* STATUS */
+/* STATUS BUTTON */
 function statusBtn(o,i,f,label){
   return `<button class="${o[f]?'yes':'no'}"
     onclick="toggleStatus(${i},'${f}')">
@@ -116,8 +124,11 @@ function statusBtn(o,i,f,label){
   </button>`;
 }
 
+
+/* TOGGLE STATUS */
 function toggleStatus(i,f){
-  if(prompt("Enter password")!=="99")return;
+
+  if(prompt("Enter password")!=="99") return;
 
   const po=data[i];
   po[f]=!po[f];
@@ -142,8 +153,9 @@ function toggleStatus(i,f){
 }
 
 
-/* PAYMENT */
+/* PAYMENT UPDATE (COLUMN W) */
 function setPayment(i,val){
+
   data[i].rtgs=val;
 
   fetch(API_URL,{
@@ -159,34 +171,50 @@ function setPayment(i,val){
 
 /* SEARCH */
 function applySearch(t){
+
   currentSearch=t.toLowerCase().trim();
+
   if(!currentSearch) return renderList(data);
 
   const f=data.filter(o=>
-    o.po_no?.toLowerCase().includes(currentSearch)||
-    o.description?.toLowerCase().includes(currentSearch)||
-    o.mfgr?.toLowerCase().includes(currentSearch)
+    o.po_no.toLowerCase().includes(currentSearch)||
+    o.description.toLowerCase().includes(currentSearch)||
+    o.mfgr.toLowerCase().includes(currentSearch)
   );
 
   renderList(f);
 }
 
+
 function highlight(txt){
-  if(!currentSearch||!txt)return txt||"";
-  return txt.replace(new RegExp(`(${currentSearch})`,"gi"),
-    `<span class="highlight">$1</span>`);
+
+  if(!currentSearch || !txt) return txt;
+
+  return txt.replace(
+    new RegExp(`(${currentSearch})`,"gi"),
+    `<span class="highlight">$1</span>`
+  );
 }
 
 
 /* HELPERS */
-function parseDate(d){return d?new Date(d).getTime():0}
+function parseDate(d){
+  return d ? new Date(d).getTime() : 0;
+}
 
 function formatDate(d){
-  if(!d)return"";
+
+  if(!d) return "";
+
   const x=new Date(d);
+
   return `${x.getDate()} ${x.toLocaleString("en",{month:"short"})} ${x.getFullYear()}`;
 }
 
 function formatNum(n){
-  return Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  return Number(n||0).toLocaleString("en-IN",{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
 }
