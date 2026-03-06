@@ -6,15 +6,22 @@
 let data = [];
 let currentSearch = "";
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwwoiEUA2QAaxSMN-OVkoeZ9fbfuLk5G_FXANPa0Cfx-c0JIdMbuI2MkwzappVRsDnh2Q/exec";
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwwoiEUA2QAaxSMN-OVkoeZ9fbfuLk5G_FXANPa0Cfx-c0JIdMbuI2MkwzappVRsDnh2Q/exec";
+
 
 /* ===============================
    LOAD DATA FROM GOOGLE SHEET
    =============================== */
 
 fetch(API_URL)
-.then(r => r.json())
+.then(res => res.json())
 .then(rows => {
+
+if(!Array.isArray(rows)){
+alert("Google Sheet connection failed");
+return;
+}
 
 data = rows.map(o => ({
 
@@ -23,10 +30,11 @@ ref_no: o.Ref_No || "",
 description: o.Description || "",
 mfgr: o.Mfgr || "",
 pack: o.Pack || "",
-qty: o.Qty || 0,
+qty: Number(o.Qty || 0),
 unit: o.Unit || "",
-sell_rate: o["Sell Rate"] || 0,
-line_total: o.Line_Total || 0,
+sell_rate: Number(o["Sell Rate"] || 0),
+line_total: Number(o.Line_Total || 0),
+
 gst: o["GST RATE"] || "",
 bill_amount: o["BILL Amount"] || "",
 hsn: o["HSN CODE"] || "",
@@ -37,10 +45,10 @@ exp: o["EXP DATE"] || "",
 date: o.Date || "",
 delivery: o.Delivery_Schedule || "",
 
-ordered: (o.ORDERED || "").toLowerCase() === "yes",
-received: (o.RECEIVED || "").toLowerCase() === "yes",
-challan: (o["DELIVERY CHALLAN"] || "").toLowerCase() === "yes",
-invoice: (o["FINAL INVOICE"] || "").toLowerCase() === "yes",
+ordered: String(o.ORDERED).toLowerCase()==="yes",
+received: String(o.RECEIVED).toLowerCase()==="yes",
+challan: String(o["DELIVERY CHALLAN"]).toLowerCase()==="yes",
+invoice: String(o["FINAL INVOICE"]).toLowerCase()==="yes",
 
 rtgs: o["RTGS AMOUNT"] || ""
 
@@ -48,6 +56,10 @@ rtgs: o["RTGS AMOUNT"] || ""
 
 renderList(data);
 
+})
+.catch(err=>{
+console.error(err);
+alert("Unable to load data from Google Sheet");
 });
 
 
@@ -79,6 +91,7 @@ html += `
 </div>
 
 <div class="row-2col">
+
 <div>
 <span class="label">Manufacturer</span>
 <div class="mfgr-val">${highlight(o.mfgr)}</div>
@@ -88,9 +101,11 @@ html += `
 <span class="label">Delivery</span>
 <div class="delivery">${formatDate(o.delivery)}</div>
 </div>
+
 </div>
 
 <div class="row-3col">
+
 <div>
 <span class="label">Qty</span>
 <div class="qty-val">${formatNum(o.qty)}</div>
@@ -105,16 +120,21 @@ html += `
 <span class="label">Amount</span>
 <div class="amount">${formatNum(o.line_total)}</div>
 </div>
+
 </div>
 
 </div>
+
 
 <div class="status-row">
+
 ${statusBtn(o,i,"ordered","Ordered")}
 ${statusBtn(o,i,"received","Received")}
 ${statusBtn(o,i,"challan","Challan")}
 ${statusBtn(o,i,"invoice","Invoice")}
+
 </div>
+
 
 <div class="pay-row">
 
@@ -125,14 +145,18 @@ value="${o.rtgs}"
 placeholder="Amount received"
 onchange="setPayment(${i},this.value)">
 
-<button class="new-btn" onclick="generateInvoice(${i})">
+<button class="new-btn"
+onclick="generateInvoice(${i})">
+
 📄 Generate Invoice
+
 </button>
 
 </div>
 
 </div>
 `;
+
 });
 
 document.getElementById("poList").innerHTML = html;
@@ -232,7 +256,6 @@ const invoiceData = [
 
 ["ISHWAR PHARMA"],
 ["BARC INVOICE"],
-
 [],
 
 ["PO Number",po.po_no],
@@ -267,7 +290,6 @@ const invoiceData = [
 ];
 
 const ws = XLSX.utils.aoa_to_sheet(invoiceData);
-
 const wb = XLSX.utils.book_new();
 
 XLSX.utils.book_append_sheet(wb,ws,"Invoice");
