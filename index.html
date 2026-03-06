@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>BARC PO Monitor — Ishwar Pharma</title>
 
-<!-- Favicon for browser -->
+<!-- Browser Favicon -->
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
 
-<!-- iPhone / iPad Home Screen Icon -->
+<!-- iPhone Home Screen Icon -->
 <link rel="apple-touch-icon" sizes="192x192" href="favicon.png">
 
-<!-- Prevent Safari zoom -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<!-- Styles -->
 <link rel="stylesheet" href="style.css">
+
+<!-- Excel Generator Library -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 </head>
 
@@ -29,6 +30,7 @@ BARC PO Monitor — Ishwar Pharma
 </header>
 
 
+<!-- Search Bar -->
 <div class="search-wrap">
 
 <input
@@ -41,9 +43,11 @@ oninput="applySearch(this.value)"
 </div>
 
 
+<!-- Purchase Order Cards -->
 <div id="poList"></div>
 
 
+<!-- Main Script -->
 <script src="app.js"></script>
 
 </body>
