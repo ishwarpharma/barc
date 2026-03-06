@@ -4,33 +4,64 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>BARC PO Monitor — Ishwar Pharma</title>
 
-<!-- Browser Favicon -->
+
+<!-- ===============================
+     Icons (Browser + iPhone Install)
+     =============================== -->
+
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
 
-<!-- iPhone Home Screen Icon -->
 <link rel="apple-touch-icon" sizes="192x192" href="favicon.png">
 
-<!-- Styles -->
+
+<!-- ===============================
+     Web App Manifest (Optional App Install)
+     =============================== -->
+
+<link rel="manifest" href="manifest.json">
+
+
+<!-- ===============================
+     Styles
+     =============================== -->
+
 <link rel="stylesheet" href="style.css">
 
-<!-- Excel Generator Library -->
+
+<!-- ===============================
+     Excel Generator Library
+     =============================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
 
 </head>
 
 
 <body>
 
+
+<!-- ===============================
+     Header
+     =============================== -->
+
 <header>
+
 BARC PO Monitor — Ishwar Pharma
+
 </header>
 
 
-<!-- Search Bar -->
+
+<!-- ===============================
+     Search Bar
+     =============================== -->
+
 <div class="search-wrap">
 
 <input
@@ -43,12 +74,21 @@ oninput="applySearch(this.value)"
 </div>
 
 
-<!-- Purchase Order Cards -->
+
+<!-- ===============================
+     Purchase Order Cards
+     =============================== -->
+
 <div id="poList"></div>
 
 
-<!-- Main Script -->
+
+<!-- ===============================
+     Main Script
+     =============================== -->
+
 <script src="app.js"></script>
+
 
 </body>
 
